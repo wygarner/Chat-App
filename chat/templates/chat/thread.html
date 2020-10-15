@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if user != object.first %}
+  <p>Chat with {{ object.first }}</p>
+{% else %}
+  <p>Chat with {{ object.second }}</p>
+{% endif %}
+<ul id='chat-items'>
+{% for chat in object.chatmessage_set.all %}
+  {% if user == chat.user %}
+    <div class='message-container darker'>
+      <p><span class="left">{{ chat.user }}</span></p>
+      <br>
+      {{ chat.message }}
+      <br>
+      <p><span class="right">{{ chat.timestamp }}</span></p>
+    </div>
+  {% else %}
+    <div class='message-container'>
+      <p><span class="left">{{ chat.user }}</span></p>
+      <br>
+      {{ chat.message }}
+      <br>
+      <p><span class="right">{{ chat.timestamp }}</span></p>
+    </div>
+  {% endif %}
+
+<!-- <li>{{ chat.message }} via {{ chat.user }}</li> -->
+
+{% endfor %}
+</ul>
+
+<form id='form' method='POST' action=""> {% csrf_token %}
+  <input type='hidden' id='myUsername' value='{{ user.username }}'/>
+{{form.as_p }}
+<input type='submit' class='btn btn-primary'/>
+</form>
+<br>
+<br>
+
+{% endblock %}
+
+{% block script %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
+<script>
+  //websocket scripts
+  var loc = window.location
+  var formData = $("#form")
+  var msgInput = $("#id_message")
+  var chatHolder = $("#chat-items")
+  var me = $("#myUsername").val()
+  
+  var wsStart = 'ws://'
+  if (loc.protocol == 'https:'){
+    wsStart = 'wss://'
+  }
+  
+  var endpoint = wsStart + loc.host + loc.pathname
+  var socket = new ReconnectingWebSocket(endpoint)
+  
+  socket.onmessage = function(e){
+    console.log('message', e)
+    var chatDataMsg = JSON.parse(e.data)
+    // chatHolder.append("<li>" + chatDataMsg.message + " via " + chatDataMsg.username + "</li>")
+    var datetime = new Date().toLocaleString();
+    if (chatDataMsg.username == me) {
+      chatHolder.append("<div class='message-container darker'><p><span class='left'>" + me + "</span></p><br>" + chatDataMsg.message + "<br><p><span class='right'>" + datetime + "</span></p>")
+    } else {
+      chatHolder.append("<div class='message-container'><p><span class='left'>" + chatDataMsg.username + "</span></p><br>" + chatDataMsg.message + "<br><p><span class='right'>" + datetime + "</span></p>")
+    }
+    
+  }
+  socket.onopen = function(e){
+    console.log('open', e)
+    formData.submit(function(event){
+      event.preventDefault()
+      var msgText = msgInput.val()
+      var finalData = {
+        'message' : msgText
+      }
+      socket.send(JSON.stringify(finalData))
+      formData[0].reset()
+    })
+  }
+  socket.onerror = function(e){
+    console.log('error', e)
+  }
+  socket.onclose = function(e){
+    console.log('close', e)
+  }
+</script>
+{% endblock %}

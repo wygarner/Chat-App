@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h3>Select a user to chat with</h3>
+
+{% for i in object_list %}
+    {% if i != user %}
+        <p><a href='/messages/{{i}}#form'>{{i}}</a></p>
+    {% endif %}
+{% endfor %}
+
+{% endblock %}

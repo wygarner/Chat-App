@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<p class='lead'>Hello {{user.username}}. This is your inbox</p>
+{% for i in object_list %}
+    <div class= 'container'>
+        {% if user != object.first %}
+            <div class='message-container' onclick="location.href='{{i.first}}#form'" style="cursor: pointer">
+                <p><span class="left">{{ i.first }}</span></p>
+                <br>
+                {{ i.chatmessage_set.last.message }}
+                <br>
+                <p><span class="right">{{ i.chatmessage_set.last.timestamp }}</span></p>
+            </div>
+        {% else %}
+            <div class='message-container' onclick="location.href='{{i.second}}#form'" style="cursor: pointer">
+                <p><span class="left">{{ i.second }}</span></p>
+                <br>
+                {{ i.chatmessage_set.last.message }}
+                <br>
+                <p><span class="right">{{ i.chatmessage_set.last.timestamp }}</span></p>
+            </div>
+        {% endif %}
+    </div>
+{% endfor %}
+
+
+
+{% endblock %}

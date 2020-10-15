@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Ignite Chat</title>
+    {% include 'css.html' %}
+    {% include "components/navbar.html" %}
+    <style>
+        .bg-purechat {
+            background-color: #3e722e!important;
+        }
+        .message-container {
+            border: 2px solid #dedede;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+            }
+        .darker {
+            border-color: #ccc;
+            background-color: #ddd;
+            }
+        .right {
+            float: right;
+            color: #aaa;
+            }
+        .left {
+            float: left;
+            color: #999;
+            }
+      </style>
+</head>
+<body>
+<br>
+<br>
+<div class='container'>
+    <div class='row border-bottom my-3 py-3'>
+        <div class='col'>
+            <h1 class='p-0 m-0'>Ignite Chat</h1>
+        </div>
+    </div>
+    {% block content %}
+    {% endblock %}
+</div>
+
+
+{% include 'js.html' %}
+{% block script %}
+{% endblock %}
+
+</body>
+{% include "components/footer.html" %}
+</html>
